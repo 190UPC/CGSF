@@ -61,11 +61,11 @@ torchrun --nproc_per_node=$GPU_NUM$ basicsr/train.py -opt options/train/cgsfx4.y
 
 ```bash
 # x2
-python basicsr/test.py -opt options/test/cgsfx2.yaml
+python test.py -opt options/test/cgsfx2.yaml
 
 # x3
-python basicsr/test.py -opt options/test/cgsfx3.yaml
+python test.py -opt options/test/cgsfx3.yaml
 
 # x4
-python basicsr/test.py -opt options/test/cgsfx4.yaml
+python test.py -opt options/test/cgsfx4.yaml
 ```
