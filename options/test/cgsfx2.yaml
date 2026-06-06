@@ -68,14 +68,12 @@ network_g:
   window_size: 7
   idynamic_num_heads: 6
   idynamic_ffn_type: GDFN
-  idynamic_ffn_expansion_factor: 2.0
-  idynamic: True
+     idynamic_ffn_expansion_factor: 2.0
   restormer_num_heads: 8
   restormer_ffn_type: GDFN
   restormer_ffn_expansion_factor: 2.0
   tlc_flag: True
   tlc_kernel: 48
-  activation: relu
   body_norm: False
   img_range: 1.0
   upsampler: pixelshuffledirect
@@ -85,7 +83,7 @@ path:
   pretrain_network_g:
   strict_load_g: true
   resume_state: ~
-  # param_key_g: 'params_ema'
+  param_key_g: 'params_ema'
 
 # validation settings
 val:
