@@ -69,3 +69,6 @@ python test.py -opt options/test/cgsfx3.yaml
 # x4
 python test.py -opt options/test/cgsfx4.yaml
 ```
+## Acknowledgement
+
+This repository is built upon [BasicSR](https://github.com/XPixelGroup/BasicSR). We also refer to [DMNet](https://github.com/PRIS-CV/DMNet) for our research. We sincerely thank the authors for sharing their code and wonderful works.
