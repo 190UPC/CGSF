@@ -147,28 +147,10 @@ class BaseFeedForward(nn.Module):
 # ---------------------------------------------------------------------------------------------------------------------
 
 # =====================================================================================================================
-# 【改动1】SMA：融合 MA 多尺度 + SMA 空洞稀疏
-#
-# 借鉴 MAT 的 NeighborhoodAttention2D：
-#   - 通道按组数均分（首组补余数），对齐 MAT 的 channels 分配逻辑
-#   - 每组独立 temperature，对齐 MAT 的 per-group 设计
-#   - dilations 参数列表，对齐 MAT 的 dilations: List[int]
-#
-# 保留原 SMA：
-#   - 通道注意力（非空间注意力）
-#   - ReLU 稀疏化
-#   - TLC 测试分块（grids / grids_inverse 完全不变）
+# 
 # =====================================================================================================================
 class SMA(nn.Module):
-    """
-    Multi-scale Sparse Multi-head Attention (V4)
 
-    MA  思想（来自 MAT NeighborhoodAttention2D）：
-        通道均分为 len(dilations) 组，每组独立建模，最后 concat
-    SMA 思想（来自原 SMA）：
-        每组用对应 dilation 的 DWConv 扩大感受野 + ReLU 稀疏化
-    TLC：测试时分块，与原版完全一致
-    """
 
     def __init__(self, dim, num_heads, bias,
                  tlc_flag=True, tlc_kernel=48,
@@ -287,14 +269,14 @@ class SMA(nn.Module):
             out = self.project_out(out)
             return out
 
-        # 测试时 TLC 分块（与原版完全一致）
+
         qkv = self.grids(qkv)
         out = self._forward(qkv)
         out = self.grids_inverse(out)
         out = self.project_out(out)
         return out
 
-    # ── TLC grids / grids_inverse（与原版完全不变）───────────────────────
+
     def grids(self, x):
         b, c, h, w = x.shape
         self.original_size = (b, c // 3, h, w)
@@ -353,9 +335,7 @@ class SMA(nn.Module):
         return preds / count_mt
 
 
-# =====================================================================================================================
-# 以下全部与原版 DMNetV2 完全一致，未做任何改动
-# =====================================================================================================================
+
 
 class AttentionLayerBlock(nn.Module):
     def __init__(self, dim, restormer_num_heads=6, restormer_ffn_type='GDFN', restormer_ffn_expansion_factor=2.,
@@ -735,18 +715,6 @@ class Upsample(nn.Sequential):
 
 @ARCH_REGISTRY.register()
 class CGSF(nn.Module):
-    r"""
-    CGSF：在 DMNetV2 基础上，将 SMA 升级为多尺度空洞稀疏注意力。,ffn
-
-    新增参数：
-        sma_dilations (tuple of tuple): 两种 dilation 配置交替使用，
-            对齐 MAT 的 dilations=[[1,1,1],[4,4,4]] 设计。
-            默认 ((1,2,3), (1,3,5))：
-                偶数块用 (1,2,3) —— 小中大感受野
-                奇数块用 (1,3,5) —— 更稀疏的大感受野
-
-    其余参数与 DMNetV2 完全一致。
-    """
 
     def __init__(self,
                  in_chans=3,
